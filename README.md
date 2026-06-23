@@ -1,26 +1,26 @@
 # README #
 
-# uquake
+# mquake
 
 The &mu;Quake pronounced muQuake (microQuake) is a Python library for processing and analyzing microseismic data. It provides a suite of tools for handling microseismic event detection, location, and characterization.
 
 ## Installation
 
-To install `uquake`, you can use `pip`:
+To install `mquake`, you can use `pip`:
 
 ```bash
-pip install uquake
+pip install mquake
 ```
 
-Alternatively, if you are using poetry, you can add uquake to your project's dependencies by running:
+Alternatively, if you are using poetry, you can add mquake to your project's dependencies by running:
 
 ```bash
 Copy code
-poetry add uquake
+poetry add mquake
 Usage
 python
 Copy code
-import uquake
+import mquake
 ```
 
 # Example usage
@@ -28,7 +28,7 @@ import uquake
 ## Objects
 
 ```python
-from uquake.core import read_events, read, read_inventory
+from mquake.core import read_events, read, read_inventory
 
 # read a catalog
 cat = read_events('catalog.xml')
@@ -47,7 +47,7 @@ x_instrument = inv[0][0].instrument.z
 
 # packaging of the file in ASDF format
 
-from uquake.core.data_exchange import MicroseismicDataExchange, read_mde
+from mquake.core.data_exchange import MicroseismicDataExchange, read_mde
 mde = MicroseismicDataExchange(st, cat, inv)
 
 mde.write('microseismic_data.asdf')
@@ -62,8 +62,8 @@ inv = mde2.inventory
 ## Grids
 
 ```python
-from uquake.grid.extended import VelocityGrid3D, VelocityGridEnsemble, SeedEnsemble
-from uquake.core import read_inventory
+from mquake.grid.extended import VelocityGrid3D, VelocityGridEnsemble, SeedEnsemble
+from mquake.core import read_inventory
 import numpy as np
 
 # create a grid
@@ -89,7 +89,7 @@ tt_grid = tt_grid_p + tt_grid_s
 ```
 
 Documentation
-The full documentation for uquake is available [here](https://microquake-ai.github.com/uquake/docs).
+The full documentation for mquake is available [here](https://microquake-ai.github.com/mquake/docs).
 
 
 Features
@@ -98,7 +98,7 @@ Features
 - [x] Support for 3D grid generation and manipulation
 
 License
-uquake is released under the AGPL License.
+mquake is released under the AGPL License.
 
 Support
 If you have any questions or need support, please file an issue in the GitHub issue tracker.

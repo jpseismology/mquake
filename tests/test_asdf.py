@@ -1,7 +1,7 @@
 import unittest
 import os
-from uquake.synthetic import event, inventory, stream
-from uquake.core import data_exchange
+from mquake.synthetic import event, inventory, stream
+from mquake.core import data_exchange
 from importlib import reload
 from time import time
 

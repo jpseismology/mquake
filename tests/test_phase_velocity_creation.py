@@ -1,4 +1,4 @@
-from uquake.grid.extended import (VelocityGrid3D, DensityGrid3D, Phases,
+from mquake.grid.extended import (VelocityGrid3D, DensityGrid3D, Phases,
                                   SeismicPropertyGridEnsemble)
 
 label = 'test'

@@ -2,7 +2,7 @@ import time
 import numpy as np
 
 
-from uquake.grid.extended import (VelocityGrid3D, Phases,DensityGrid3D, PhaseVelocity,
+from mquake.grid.extended import (VelocityGrid3D, Phases,DensityGrid3D, PhaseVelocity,
                                   SeismicPropertyGridEnsemble, GridUnits, GridTypes,
                                   PhaseVelocityEnsemble, DisbaParam)
 
@@ -42,7 +42,7 @@ density = DensityGrid3D('NT', [90, 80, 60],
                         [50 * alpha, 50 * alpha, 25 * alpha],
                         label='test', value=2.7, grid_units=unit)
 
-s_velocity.write(filename="/Users/mahernasr/Out_uquake/vs", format="VTK")
+s_velocity.write(filename="/Users/mahernasr/Out_mquake/vs", format="VTK")
 #
 spge = SeismicPropertyGridEnsemble(p_velocity, s_velocity, density)
 #
@@ -80,5 +80,5 @@ spge.plot_sensitivity_kernel(period=4, x=2300, y=1500, phase=Phases.RAYLEIGH,
 #
 # phase_velocity = PhaseVelocity.from_seismic_property_grid_ensemble(
 #     seismic_param=spge, period=0.2, phase=Phases("RAYLEIGH"), disba_param=disba_param)
-# phase_velocity.write(filename="/Users/mahernasr/Out_uquake/Rayleigh", format="VTK")
+# phase_velocity.write(filename="/Users/mahernasr/Out_mquake/Rayleigh", format="VTK")
 # phase_velocity.plot()

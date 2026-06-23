@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "uquake"
+name = "mquake"
 version = "3.5.0"
 description = "extension of the ObsPy library for local seismicity"
-authors = ["uQuake development team <dev@uquake.org>"]
+authors = ["uQuake development team <dev@mquake.org>"]
 license = "AGPL-3.0-or-later"
 
 # poetry config virtualenvs.create false; poetry env info
@@ -64,74 +64,74 @@ pdoc = "^14.1.0"
 
 [tool.poetry.plugins] # Optional super table
 
-[tool.poetry.plugins."uquake.io.inventory"]
-ESG_SENSOR = 'uquake.io.inventory'
+[tool.poetry.plugins."mquake.io.inventory"]
+ESG_SENSOR = 'mquake.io.inventory'
 
-[tool.poetry.plugins."uquake.io.inventory.ESG_SENSOR"]
-readFormat = "uquake.io.inventory:read_esg_sensor_file"
+[tool.poetry.plugins."mquake.io.inventory.ESG_SENSOR"]
+readFormat = "mquake.io.inventory:read_esg_sensor_file"
 
-[tool.poetry.plugins."uquake.io.event"]
-QUAKEML = "uquake.io.quakeml"
-NLLOC = "uquake.io.nlloc"
+[tool.poetry.plugins."mquake.io.event"]
+QUAKEML = "mquake.io.quakeml"
+NLLOC = "mquake.io.nlloc"
 
-[tool.poetry.plugins."uquake.io.waveform"]
-ESG_SEGY = "uquake.io.waveform"
-HSF = "uquake.io.waveform"
-TEXCEL_CSV = "uquake.io.waveform"
-IMS_CONTINUOUS = "uquake.io.waveform"
-IMS_ASCII = "uquake.io.waveform"
-ONE_BIT = "uquake.io.waveform"
+[tool.poetry.plugins."mquake.io.waveform"]
+ESG_SEGY = "mquake.io.waveform"
+HSF = "mquake.io.waveform"
+TEXCEL_CSV = "mquake.io.waveform"
+IMS_CONTINUOUS = "mquake.io.waveform"
+IMS_ASCII = "mquake.io.waveform"
+ONE_BIT = "mquake.io.waveform"
 
-[tool.poetry.plugins."uquake.io.waveform.ESG_SEGY"]
-readFormat = "uquake.io.waveform:read_ESG_SEGY"
+[tool.poetry.plugins."mquake.io.waveform.ESG_SEGY"]
+readFormat = "mquake.io.waveform:read_ESG_SEGY"
 
-[tool.poetry.plugins."uquake.io.waveform.TEXCEL_CSV"]
-readFormat = "uquake.io.waveform:read_TEXCEL_CSV"
+[tool.poetry.plugins."mquake.io.waveform.TEXCEL_CSV"]
+readFormat = "mquake.io.waveform:read_TEXCEL_CSV"
 
-[tool.poetry.plugins."uquake.io.waveform.IMS_ASCII"]
-readFormat = "uquake.io.waveform:read_IMS_ASCII"
+[tool.poetry.plugins."mquake.io.waveform.IMS_ASCII"]
+readFormat = "mquake.io.waveform:read_IMS_ASCII"
 
-[tool.poetry.plugins."uquake.io.waveform.ONE_BIT"]
-readFormat = "uquake.io.waveform:read_one_bit"
-writeFormat = "uquake.io.waveform:write_one_bit"
+[tool.poetry.plugins."mquake.io.waveform.ONE_BIT"]
+readFormat = "mquake.io.waveform:read_one_bit"
+writeFormat = "mquake.io.waveform:write_one_bit"
 
-[tool.poetry.plugins."uquake.io.data_exchange.zarr"]
-readFormat = "uquake.io.data_exchange:read_zarr"
-writeFormat = "uquake.io.data_exchange:write_zarr"
+[tool.poetry.plugins."mquake.io.data_exchange.zarr"]
+readFormat = "mquake.io.data_exchange:read_zarr"
+writeFormat = "mquake.io.data_exchange:write_zarr"
 
-[tool.poetry.plugins."uquake.io.data_exchange.asdf"]
-readFormat = "uquake.io.data_exchange:read_asdf"
-writeFormat = "uquake.io.data_exchange:write_asdf"
+[tool.poetry.plugins."mquake.io.data_exchange.asdf"]
+readFormat = "mquake.io.data_exchange:read_asdf"
+writeFormat = "mquake.io.data_exchange:write_asdf"
 
-[tool.poetry.plugins."uquake.io.grid"]
-NLLOC = "uquake.io.grid"
-VTK = "uquake.io.grid"
-PICKLE = "uquake.io.grid"
-CSV = "uquake.io.grid"
+[tool.poetry.plugins."mquake.io.grid"]
+NLLOC = "mquake.io.grid"
+VTK = "mquake.io.grid"
+PICKLE = "mquake.io.grid"
+CSV = "mquake.io.grid"
 
-#[tool.poetry.plugins."uquake.io.grid.NLLOC"]
-#readFormat = "uquake.io.grid:read_nll"
-#writeFormat = "uquake.io.grid:write_nll"
+#[tool.poetry.plugins."mquake.io.grid.NLLOC"]
+#readFormat = "mquake.io.grid:read_nll"
+#writeFormat = "mquake.io.grid:write_nll"
 
-[tool.poetry.plugins."uquake.io.grid.NLLOC"]
-readFormat = "uquake.io.grid:read_nlloc"
-#writeFormat = "uquake.io.grid:write_nll"
+[tool.poetry.plugins."mquake.io.grid.NLLOC"]
+readFormat = "mquake.io.grid:read_nlloc"
+#writeFormat = "mquake.io.grid:write_nll"
 
-[tool.poetry.plugins."uquake.io.grid.VTK"]
-readFormat = "uquake.io.grid:read_vtk"
-writeFormat = "uquake.io.grid:write_vtk"
+[tool.poetry.plugins."mquake.io.grid.VTK"]
+readFormat = "mquake.io.grid:read_vtk"
+writeFormat = "mquake.io.grid:write_vtk"
 
-[tool.poetry.plugins."uquake.io.grid.PICKLE"]
-readFormat = "uquake.io.grid:read_pickle"
-writeFormat = "uquake.io.grid:write_pickle"
+[tool.poetry.plugins."mquake.io.grid.PICKLE"]
+readFormat = "mquake.io.grid:read_pickle"
+writeFormat = "mquake.io.grid:write_pickle"
 
-[tool.poetry.plugins."uquake.io.grid.HDF5"]
-readFormat = "uquake.io.grid:read_hdf5"
-writeFormat = "uquake.io.grid:write_hdf5"
+[tool.poetry.plugins."mquake.io.grid.HDF5"]
+readFormat = "mquake.io.grid:read_hdf5"
+writeFormat = "mquake.io.grid:write_hdf5"
 
-[tool.poetry.plugins."uquake.io.grid.CSV"]
-writeFormat = "uquake.io.grid:write_csv"
-readFormat = "uquake.io.grid:read_csv"
+[tool.poetry.plugins."mquake.io.grid.CSV"]
+writeFormat = "mquake.io.grid:write_csv"
+readFormat = "mquake.io.grid:read_csv"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -193,7 +193,7 @@ convention = "numpy"
     pdoc
       --docformat $docformat
       --output-directory $outputdirectory
-      uquake
+      mquake
     """
 
     [[tool.poe.tasks.docs.args]]

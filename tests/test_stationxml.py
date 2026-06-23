@@ -1,6 +1,6 @@
 import unittest
-from uquake.core import inventory
-from uquake.synthetic.inventory import generate_inventory
+from mquake.core import inventory
+from mquake.synthetic.inventory import generate_inventory
 import os
 
 

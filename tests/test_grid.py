@@ -1,11 +1,11 @@
 import unittest
-from uquake.grid import extended
+from mquake.grid import extended
 import random
 import numpy as np
-from uquake.grid.base import Grid
-from uquake.grid.extended import (VelocityGrid3D, VelocityGridEnsemble, Phases,
+from mquake.grid.base import Grid
+from mquake.grid.extended import (VelocityGrid3D, VelocityGridEnsemble, Phases,
                                   SeedEnsemble)
-from uquake.io.grid.core import (read_velocity_grid_from_hdf5, write_grid_to_hdf5,
+from mquake.io.grid.core import (read_velocity_grid_from_hdf5, write_grid_to_hdf5,
                                  read_travel_time_ensemble_from_hdf5)
 from tempfile import NamedTemporaryFile
 

@@ -16,8 +16,8 @@
 import pytest
 import urllib.request
 import os
-from uquake.core.util.requests import download_file_from_url
-from uquake import read, read_events, read_inventory
+from mquake.core.util.requests import download_file_from_url
+from mquake import read, read_events, read_inventory
 
 
 @pytest.fixture(scope="session")

@@ -1,9 +1,9 @@
 import numpy as np
 
-from uquake.grid.extended import (VelocityGrid3D, Phases,DensityGrid3D, PhaseVelocity,
+from mquake.grid.extended import (VelocityGrid3D, Phases,DensityGrid3D, PhaseVelocity,
                                   SeismicPropertyGridEnsemble, GridUnits, GridTypes,
                                   PhaseVelocityEnsemble, DisbaParam, Seed, SeedEnsemble)
-from uquake.core.coordinates import Coordinates
+from mquake.core.coordinates import Coordinates
 
 dst_unit = "m"
 label = 'test'
@@ -45,7 +45,7 @@ spge = SeismicPropertyGridEnsemble(p_velocity, s_velocity, density)
 phase_velocity = PhaseVelocity.from_seismic_property_grid_ensemble(
     seismic_param=spge, period=0.1, phase=Phases("RAYLEIGH"), disba_param=disba_param)
 #phase_velocity.plot()
-phase_velocity.write(filename="/Users/mahernasr/Out_uquake/Rayleigh", format="VTK")
+phase_velocity.write(filename="/Users/mahernasr/Out_mquake/Rayleigh", format="VTK")
 rcv = phase_velocity.generate_random_points_in_grid(n_points=1, grid_space=False,
                                                       seed=1)
 
@@ -69,4 +69,4 @@ seeds = SeedEnsemble(seeds_list)
 
 #phase_velocity.to_time(seed=seed_instance, method="SPM", ns=12)
 tt_ensemble = phase_velocity.to_time_multi_threaded(seeds=seeds, method="SPM", ns =5)
-#tt_grid="all", folder="/Users/mahernasr/out_uquake/model_")
+#tt_grid="all", folder="/Users/mahernasr/out_mquake/model_")

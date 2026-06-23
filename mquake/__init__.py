@@ -13,26 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pytest
-from mquake.nlloc.nlloc import Srces, Site
-
-
-sites = []
-for i in range(0, 10):
-    sites.append(Site(f'test_long_name{i: 02d}', 0, 0, 0))
-
-srces = Srces(sites=sites)
-
-
-def test_create_create_srces():
-    print(srces.site_code_mapping)
-    assert srces is not None
-
-
-def test_add_site_srces():
-    srces.add_site(f'shtest', 0, 0, 0)
-    assert len(sites) == 11
-
-
-if __name__ == "__main__":
-    pytest.main()
+__package_name__ = 'mquake'
+__version__ = '3.5.17'
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
+from .core import read, read_events, read_inventory

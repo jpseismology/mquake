@@ -1,8 +1,8 @@
-from uquake.synthetic import event, inventory, stream
-from uquake.core import data_exchange
+from mquake.synthetic import event, inventory, stream
+from mquake.core import data_exchange
 from importlib import reload
 from time import time
-from uquake.io.data_exchange.zarr import write_zarr, read_zarr
+from mquake.io.data_exchange.zarr import write_zarr, read_zarr
 import shutil
 
 

@@ -1,7 +1,7 @@
 import unittest
-from uquake.core import event
+from mquake.core import event
 from importlib import reload
-from uquake.synthetic.event import (generate_catalog, generate_ray,
+from mquake.synthetic.event import (generate_catalog, generate_ray,
                                     generate_uncertainty_point_cloud)
 reload(event)
 

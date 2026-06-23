@@ -1,14 +1,14 @@
-from uquake.core.data_exchange import ZarrHandler
-from uquake.core import read_events
-from uquake.grid import base
+from mquake.core.data_exchange import ZarrHandler
+from mquake.core import read_events
+from mquake.grid import base
 from importlib import reload
 reload(base)
 import matplotlib.pyplot as plt
 import numpy as np
-from uquake.grid import read_grid
+from mquake.grid import read_grid
 from pathlib import Path
-from uquake.core.inventory import InstrumentSensitivity
-from uquake.core.event import RayEnsemble
+from mquake.core.inventory import InstrumentSensitivity
+from mquake.core.event import RayEnsemble
 
 file = '/mnt/HDD_5TB_01/Cozamin/principal_events/zarr/Cozamin231115123813005.zarr'
 gridpath = Path('/home/jpmercier/Repositories/museis.ai/'
