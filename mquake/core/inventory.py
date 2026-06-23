@@ -50,7 +50,13 @@ from io import BytesIO
 from .util.tools import lon_lat_x_y
 
 from .util import ENTRY_POINTS
-from pkg_resources import load_entry_point
+from importlib.metadata import entry_points as _entry_points
+
+def _load_entry_point(dist_key, group, name):
+    for ep in _entry_points(group=group):
+        if ep.name == name:
+            return ep.load()
+    raise ImportError(f"Entry point {name!r} not found in group {group!r}")
 from tempfile import NamedTemporaryFile
 import os
 from .util.requests import download_file_from_url
@@ -1152,7 +1158,7 @@ def read_inventory(path_or_file_object, format='STATIONXML',
     else:
         format_ep = ENTRY_POINTS['inventory'][format]
 
-        read_format = load_entry_point(format_ep.dist.key,
+        read_format = _load_entry_point(format_ep.dist.key,
                                        'obspy.io.%s' %
                                        format_ep.name, 'readFormat')
 
@@ -1168,7 +1174,7 @@ def read_inventory(path_or_file_object, format='STATIONXML',
 #
 #     if format in ENTRY_POINTS['inventory'].keys():
 #         format_ep = ENTRY_POINTS['inventory'][format]
-#         read_format = load_entry_point(format_ep.dist.key,
+#         read_format = _load_entry_point(format_ep.dist.key,
 #                                        'obspy.plugin.inventory.%s' %
 #                                        format_ep.name, 'readFormat')
 #

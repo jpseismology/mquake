@@ -27,7 +27,13 @@ from __future__ import annotations
 import numpy as np
 from uuid import uuid4
 from ..core.logging import logger
-from pkg_resources import load_entry_point
+from importlib.metadata import entry_points as _entry_points
+
+def _load_entry_point(dist_key, group, name):
+    for ep in _entry_points(group=group):
+        if ep.name == name:
+            return ep.load()
+    raise ImportError(f"Entry point {name!r} not found in group {name!r}")
 from ..core.util import ENTRY_POINTS
 from pathlib import Path
 from scipy.ndimage import map_coordinates
@@ -53,7 +59,7 @@ def read_grid(filename, format='PICKLE', **kwargs):
                         f'for Grid objects')
 
     format_ep = ENTRY_POINTS['grid'][format]
-    read_format = load_entry_point(format_ep.dist.key,
+    read_format = _load_entry_point(format_ep.dist.key,
                                    f'mquake.io.grid.{format_ep.name}',
                                    'readFormat')
 
@@ -534,7 +540,7 @@ class Grid(object):
                             f'for Grid objects')
 
         format_ep = ENTRY_POINTS['grid'][format]
-        write_format = load_entry_point(format_ep.dist.key,
+        write_format = _load_entry_point(format_ep.dist.key,
                                         f'mquake.io.grid.{format_ep.name}',
                                         'writeFormat')
 
