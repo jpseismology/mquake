@@ -36,7 +36,13 @@ from io import BytesIO
 
 import numpy as np
 import obspy.core.stream as obsstream
-from pkg_resources import load_entry_point
+from importlib.metadata import entry_points as _entry_points
+
+def __load_entry_point(dist_key, group, name):
+    for ep in _entry_points(group=group):
+        if ep.name == name:
+            return ep.load()
+    raise ImportError(f"Entry point {name!r} not found in group {group!r}")
 
 from .trace import Trace
 from .util import ENTRY_POINTS, tools
@@ -137,7 +143,7 @@ class Stream(obsstream.Stream, ABC):
 
         if format in 'ONE_BIT':
             format_ep = ENTRY_POINTS['waveform_write'][format]
-            write_format = load_entry_point(
+            write_format = _load_entry_point(
                 format_ep.dist.key,
                 f'mquake.io.waveform.{format_ep.name}', 'writeFormat')
             return write_format(self, filename, **kwargs)
@@ -682,7 +688,7 @@ def read(filename, format='MSEED', **kwargs):
     if format in ENTRY_POINTS['waveform'].keys():
         format_ep = ENTRY_POINTS['waveform'][format]
         try:
-            read_format = load_entry_point(format_ep.dist.key,
+            read_format = _load_entry_point(format_ep.dist.key,
                                            'mquake.io.waveform.%s' %
                                            format_ep.name, 'readFormat')
         except Exception as e:
