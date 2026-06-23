@@ -14,6 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __package_name__ = 'uquake'
-__version__ = '0.3.1'
-__import__('pkg_resources').declare_namespace(__name__)
+__version__ = '3.5.17'
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
 from .core import read, read_events, read_inventory
