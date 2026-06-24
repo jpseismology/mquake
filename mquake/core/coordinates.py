@@ -14,10 +14,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from enum import Enum
+from functools import cached_property
 import json
 from obspy.core.util import AttribDict
-import utm
 import pyproj
+from pyproj import CRS, Transformer
+from pyproj.aoi import AreaOfInterest
+from pyproj.database import query_utm_crs_info
 import numpy as np
 from mquake.core.logging import logger
 
@@ -128,8 +131,13 @@ class CoordinateTransformation:
     :type translation: tuple[float, float, float]
     :param rotation: Rotation matrix or Euler angles.
     :type rotation: list[list[float]] or tuple[float, float, float]
-    :param epsg_code: EPSG code for the target coordinate system.
-    :type epsg_code: int
+    :param crs: Target projected coordinate reference system, given in any form
+        :func:`pyproj.CRS.from_user_input` accepts — an authority string
+        (``"EPSG:32613"``), an integer EPSG code, a PROJ string, WKT, or a
+        :class:`pyproj.CRS`.  ``None`` (default) means the coordinates are a
+        purely local Cartesian frame with no geographic referencing; the
+        lat/lon conversions then raise.
+    :type crs: str or int or pyproj.CRS or None
     :param scaling: Optional scaling factor or factors.
     :type scaling: float or tuple[float, float, float]
     :param reference_elevation: Reference elevation for depth conversions.
@@ -137,12 +145,12 @@ class CoordinateTransformation:
     """
 
     def __init__(
-        self, translation=(0, 0, 0), rotation=None, epsg_code=None, scaling=None,
+        self, translation=(0, 0, 0), rotation=None, crs=None, scaling=None,
             reference_elevation=0.0
     ):
-        self.translation = translation
+        self.translation = tuple(translation)
         self.rotation = rotation
-        self.epsg_code = epsg_code
+        self.crs = CRS.from_user_input(crs) if crs is not None else None
         self.scaling = scaling if scaling is not None else 1.0
         self.reference_elevation = reference_elevation
 
@@ -164,7 +172,7 @@ class CoordinateTransformation:
         if self.rotation != other.rotation:
             return False
 
-        if self.epsg_code != other.epsg_code:
+        if self.crs != other.crs:
             return False
 
         if self.scaling != other.scaling:
@@ -176,10 +184,11 @@ class CoordinateTransformation:
         return True
 
     def __repr__(self):
+        crs_label = self.crs.srs if self.crs is not None else None
         out_str = f"""
                 translation: {self.translation}
                    rotation: {self.rotation}
-                  epsg_code: {self.epsg_code}
+                        crs: {crs_label}
                     scaling: {self.scaling}
         reference elevation: {self.reference_elevation}
         """
@@ -247,30 +256,58 @@ class CoordinateTransformation:
         pass
 
     def to_json(self):
-        return json.dumps(self.__dict__)
+        rotation = self.rotation
+        if isinstance(rotation, np.ndarray):
+            rotation = rotation.tolist()
+        out_dict = {
+            "translation": list(self.translation),
+            "rotation": rotation,
+            "crs": self.crs.to_wkt() if self.crs is not None else None,
+            "scaling": self.scaling,
+            "reference_elevation": self.reference_elevation,
+        }
+        return json.dumps(out_dict)
 
     @classmethod
     def from_json(cls, string):
         return cls(**json.loads(string))
 
     @property
-    def utm_crs(self):
-        return pyproj.CRS(f'epsg:{self.epsg_code}')
+    def projected_crs(self):
+        """The projected CRS (``None`` for a purely local frame)."""
+        return self.crs
 
-    @property
-    def sph_crs(self):
-        return pyproj.CRS(f'epsg:4326')
+    @cached_property
+    def geographic_crs(self):
+        """
+        Geographic (lat/lon) CRS derived from the projected CRS's datum.
 
-    def to_latlon(self, northing, easting):
-        transformation = pyproj.Transformer.from_crs(
-            self.utm_crs, self.sph_crs, always_xy=True)
-        lon, lat = transformation.transform(easting, northing)
+        Using the projected CRS's own ``geodetic_crs`` keeps the datum
+        consistent instead of assuming WGS84.
+        """
+        if self.crs is None:
+            raise ValueError(
+                "No CRS set on this CoordinateTransformation; lat/lon "
+                "conversion is undefined for a purely local frame."
+            )
+        return self.crs.geodetic_crs
+
+    @cached_property
+    def _to_geographic(self):
+        return Transformer.from_crs(self.crs, self.geographic_crs, always_xy=True)
+
+    @cached_property
+    def _from_geographic(self):
+        return Transformer.from_crs(self.geographic_crs, self.crs, always_xy=True)
+
+    def to_latlon(self, easting, northing):
+        """Project (easting, northing) in the CRS to (latitude, longitude)."""
+        lon, lat = self._to_geographic.transform(easting, northing)
         return lat, lon
 
     def from_latlon(self, lat, lon):
-        transformation = pyproj.Transformer.from_crs(
-            self.sph_crs, self.utm_crs, always_xy=True)
-        return transformation.transform(lon, lat)
+        """Project (latitude, longitude) to (easting, northing) in the CRS."""
+        return self._from_geographic.transform(lon, lat)
 
 
 class Coordinates:
@@ -280,7 +317,7 @@ class Coordinates:
         y: float,
         z: float,
         coordinate_system: CoordinateSystem = CoordinateSystem.NED,
-        transformation: CoordinateTransformation = CoordinateTransformation(),
+        transformation: CoordinateTransformation = None,
     ):
         """
         :param x: X-coordinate.
@@ -454,17 +491,27 @@ class Coordinates:
     @classmethod
     def from_lat_lon(cls, latitude, longitude, z,
                      coordinate_system: CoordinateSystem = CoordinateSystem.NED):
-        easting, northing, zone_number, lat_zone = utm.from_latlon(latitude, longitude)
-        if latitude >= 0:
-            epsg_code = 32600 + zone_number  # Northern hemisphere
-        else:
-            epsg_code = 32700 + zone_number  # Southern hemisphere
+        # Datum-aware UTM-zone selection (handles hemisphere automatically).
+        utm_info = query_utm_crs_info(
+            "WGS 84",
+            AreaOfInterest(longitude, latitude, longitude, latitude),
+        )[0]
+        transformation = CoordinateTransformation(crs=f"EPSG:{utm_info.code}")
+        easting, northing = transformation.from_latlon(latitude, longitude)
 
-        coordinate_transformation = CoordinateTransformation(epsg_code=epsg_code)
-        return cls(northing, easting, z, coordinate_system=coordinate_system,
-                   transformation=coordinate_transformation)
+        if coordinate_system in (CoordinateSystem.NED, CoordinateSystem.NEU):
+            x, y = northing, easting
+        else:
+            x, y = easting, northing
+        return cls(x, y, z, coordinate_system=coordinate_system,
+                   transformation=transformation)
 
     def to_lat_lon(self):
+        if self.transformation is None or self.transformation.crs is None:
+            raise ValueError(
+                "Coordinates have no CRS; lat/lon is undefined for a purely "
+                "local frame. Attach a CoordinateTransformation with a crs."
+            )
         if self.transformation.rotation is not None:
             logger.warning('the rotation is not implemented')
         if (self.coordinate_system == CoordinateSystem.NED or
@@ -476,7 +523,7 @@ class Coordinates:
             northing = self.y - self.transformation.translation[0]
             easting = self.x - self.transformation.translation[1]
 
-        return self.transformation.to_latlon(northing, easting)
+        return self.transformation.to_latlon(easting, northing)
 
     @property
     def latitude(self):
